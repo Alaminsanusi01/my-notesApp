@@ -1,23 +1,22 @@
 import { useState, useEffect } from "react";
 import { db, auth } from "../firebase";
-import { collection, addDoc,updateDoc, doc, getDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, updateDoc, doc, getDoc, serverTimestamp } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
-import { FaArrowLeft } from "react-icons/fa"; // Importing the arrow icon from react-icons
+import { FaArrowLeft } from "react-icons/fa";
 
 function Editor() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [animClass, setAnimClass] = useState("");
   const navigate = useNavigate();
-  const { id } = useParams(); // Use URL params to check if it's an edit
+  const { id } = useParams();
 
-  // Add animation classes after component mounts
   useEffect(() => {
     setTimeout(() => {
       setAnimClass("animate-in");
     }, 100);
     if (id) {
-      fetchNote(id); // Fetch existing note if editing
+      fetchNote(id);
     }
   }, [id]);
 
@@ -45,7 +44,6 @@ function Editor() {
     }
 
     try {
-      // Add save animation class
       setAnimClass("animate-save");
 
       const user = auth.currentUser;
@@ -55,20 +53,21 @@ function Editor() {
       }
 
       if (id) {
-        // Edit existing note
         await updateDoc(doc(db, "notes", id), {
           title,
           content,
           updatedAt: serverTimestamp(),
         });
       } else {
-        // Add new note
-        await addDoc(collection(db, "notes"), {
+        const docRef = await addDoc(collection(db, "notes"), {
           userId: user.uid,
           title,
           content,
           createdAt: serverTimestamp(),
         });
+
+        // Save newly created note ID to local storage
+        localStorage.setItem("lastNoteId", docRef.id);
       }
 
       setTimeout(() => {
@@ -91,19 +90,15 @@ function Editor() {
   return (
     <div className={`min-h-screen bg-gradient-to-br from-purple-800 via-indigo-900 to-blue-900 flex items-center justify-center p-4 ${animClass}`}>
       <div className="relative w-full max-w-3xl bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-8 shadow-2xl border border-white border-opacity-20 overflow-hidden">
-        
-        {/* Animated background elements */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
           <div className="floating-circle bg-purple-600 opacity-20 w-64 h-64 rounded-full absolute -top-20 -left-20"></div>
           <div className="floating-circle-reverse bg-blue-500 opacity-20 w-80 h-80 rounded-full absolute -bottom-32 -right-32"></div>
           <div className="floating-circle-slow bg-pink-500 opacity-10 w-40 h-40 rounded-full absolute top-1/2 left-1/4"></div>
         </div>
 
-        {/* Content container */}
         <div className="relative z-10">
-          {/* Back Button with Arrow */}
           <button
-            onClick={() => handleCancel()}
+            onClick={handleCancel}
             className="flex items-center mb-6 text-white hover:text-blue-300 transition-all duration-300 transform hover:translate-x-1 group"
           >
             <FaArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform duration-300" />
@@ -148,7 +143,7 @@ function Editor() {
         </div>
       </div>
 
-      {/* Add global styles for animations */}
+      {/* Global styles */}
       <style jsx global>{`
         @keyframes float {
           0% { transform: translateY(0px) rotate(0deg); }
