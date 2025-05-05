@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { doc, getDoc, deleteDoc } from "firebase/firestore";
@@ -19,7 +18,7 @@ function ViewNote() {
         setNote(docSnap.data());
       } else {
         alert("Note not found");
-        navigate("/");
+        navigate("/"); // If note not found, redirect to home page
       }
       setLoading(false);
     };
@@ -32,7 +31,7 @@ function ViewNote() {
     if (confirmDelete) {
       try {
         await deleteDoc(doc(db, "notes", id));
-        navigate("/");
+        navigate("/dashboard"); // Navigate to Dashboard after deletion
       } catch (error) {
         alert("Failed to delete the note.");
       }
@@ -48,7 +47,7 @@ function ViewNote() {
 
       <div className="mt-6 flex gap-4">
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/dashboard")} // Navigate to Dashboard
           className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
         >
           Back
