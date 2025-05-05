@@ -66,6 +66,9 @@ function Register() {
             </svg>
           </div>
 
+
+          {/* efef */}
+
           <h1 className="text-3xl font-bold mb-8 text-blue-800 text-center relative">
             Create Account
             <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-blue-500 rounded-full mt-2"></div>
